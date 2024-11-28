@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Purchases</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- DataTables CSS -->
+  <link href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css" rel="stylesheet">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container-fluid">
+          <a class="navbar-brand" href="/">Billing App</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+              <ul class="navbar-nav">
+                  <li class="nav-item">
+                      <a class="nav-link active" aria-current="page" href="{% url 'products_page' %}">Products</a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link" href="{% url 'purchases_page' %}">Purchases</a>
+                  </li>
+                  <!-- Add more nav links as needed -->
+              </ul>
+          </div>
+      </div>
+  </nav>
+  <div class="container mt-5">
+    <h1 class="mb-4">Purchase History</h1>
+    <table id="purchaseTable" class="table table-striped">
+      <thead class="table-dark">
+        <tr>
+            <th>#</th>
+            <th>Customer Email</th>
+            <th>Products</th>
+            <th>Total Amount</th>
+            <th>Tax Amount</th>
+            <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for purchase in purchases %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ purchase.customer.email }}</td>
+            <td>
+                {% for product in purchase.product_data %}
+                    {{ product.product_id }} - (Qty: {{ product.quantity }})<br>
+                {% endfor %}
+            </td>
+            <td>${{ purchase.total_amount }}</td>
+            <td>${{ purchase.tax_amount }}</td>
+            <td>{{ purchase.date|date:"Y-m-d H:i:s" }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6" class="text-center">No purchases found.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <a href="{% url 'products_page' %}" class="btn btn-primary mt-4">Back to Products</a>
+  </div>
+
+  <!-- jQuery and DataTables JS -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+
+  <script>
+    $(document).ready(function() {
+      // Initialize DataTable
+      $('#purchaseTable').DataTable();
+    });
+  </script>
+</body>
+</html>

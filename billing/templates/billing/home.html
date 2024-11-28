@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Billing Page</title>
+  <!-- Bootstrap CSS -->
+  <link 
+    href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" 
+    rel="stylesheet"
+  >
+  <style>
+    .pull-right {
+      float: right;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container-fluid">
+          <a class="navbar-brand" href="/">Billing App</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+              <ul class="navbar-nav">
+                  <li class="nav-item">
+                      <a class="nav-link active" aria-current="page" href="{% url 'products_page' %}">Products</a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link" href="{% url 'purchases_page' %}">Purchases</a>
+                  </li>
+                  <!-- Add more nav links as needed -->
+              </ul>
+          </div>
+      </div>
+  </nav>
+  <div class="container mt-5">
+    <div class="card shadow">
+      <div class="card-header bg-primary text-white">
+        <h2 class="text-center mb-0">Billing Page</h2>
+      </div>
+      <div class="card-body">
+        <!-- Form Start -->
+        <form action="{% url 'generate_bill' %}" method="POST">
+          {% csrf_token %}
+          <div class="row mb-3">
+            <div class="col-6">
+              <label for="customerEmail" class="form-label">Customer Email</label>
+              <input type="email" id="customerEmail" name="customer_email" class="form-control" placeholder="Enter Email ID" required>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Bill Section</label>
+            <div id="billSection" class="dynamic-fields mb-3">
+              <div class="row g-2 align-items-center mb-2">
+                <div class="col">
+                  <input type="text" name="products[]" placeholder="Product ID" class="form-control" required>
+                </div>
+                <div class="col">
+                  <input type="number" name="quantity[]" placeholder="Quantity" class="form-control" required>
+                </div>
+                <div class="col">
+                  <!-- <button type="button" class="btn btn-danger remove-btn">Cancel</button> -->
+                </div>
+              </div>
+            </div>
+            <button type="button" class="btn btn-secondary pull-right" id="addNew">Add New</button>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Denominations</label>
+            <div class="row">
+              <!-- Denomination Inputs -->
+              {% for denom in denominations %}
+              <div class="col-4">
+                <label class="form-label">{{ denom.value }}</label>
+              </div>
+              <div class="col-8">
+                <input type="number" min="0" name="denominations[{{ denom.value }}]" class="form-control" value="{{ denom.count }}">
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="cashPaid" class="form-label">Cash Paid by Customer</label>
+            <input type="number" id="cashPaid" name="cash_paid" class="form-control" placeholder="Enter Amount" required>
+          </div>
+
+          <div class="d-flex justify-content-between">
+            <button type="reset" class="btn btn-danger">Cancel</button>
+            <button type="submit" class="btn btn-success">Generate Bill</button>
+          </div>
+        </form>
+        <!-- Form End -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS and dependencies -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <script>
+    document.getElementById('addNew').addEventListener('click', function () {
+      const billSection = document.getElementById('billSection');
+      const fieldGroup = document.createElement('div');
+      fieldGroup.classList.add('row', 'g-2', 'align-items-center', 'mb-2');
+      fieldGroup.innerHTML = `
+        <div class="col">
+          <input type="text" name="products[]" placeholder="Product ID" class="form-control" required>
+        </div>
+        <div class="col">
+          <input type="number" name="quantity[]" placeholder="Quantity" class="form-control" required>
+        </div>
+        <div class="col">
+          <button type="button" class="btn btn-danger remove-btn">Cancel</button>
+        </div>
+      `;
+      billSection.appendChild(fieldGroup);
+
+      // Attach event listener to remove button
+      fieldGroup.querySelector('.remove-btn').addEventListener('click', function () {
+        fieldGroup.remove();
+      });
+    });
+
+    // Attach event listener to existing "Cancel" buttons
+    document.querySelectorAll('.remove-btn').forEach(button => {
+      button.addEventListener('click', function () {
+        button.closest('.row').remove();
+      });
+    });
+  </script>
+</body>
+</html>

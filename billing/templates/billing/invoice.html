@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Billing Page</title>
+  <!-- Bootstrap CSS -->
+  <link 
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" 
+    rel="stylesheet"
+  >
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container-fluid">
+          <a class="navbar-brand" href="/">Billing App</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+              <ul class="navbar-nav">
+                  <li class="nav-item">
+                      <a class="nav-link active" aria-current="page" href="{% url 'products_page' %}">Products</a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link" href="{% url 'purchases_page' %}">Purchases</a>
+                  </li>
+                  <!-- Add more nav links as needed -->
+              </ul>
+          </div>
+      </div>
+    </nav>
+  <div class="container mt-5">
+    <h1 class="text-center">Billing Page</h1>
+    
+    <!-- Customer Email Section -->
+    <div class="mb-4">
+      <strong>Customer Email:</strong> <span>{{customer_email}}</span>
+    </div>
+    
+    <!-- Bill Section -->
+    <table class="table table-bordered">
+      <thead class="table-light">
+        <tr>
+          <th>Product ID</th>
+          <th>Unit Price</th>
+          <th>Quantity</th>
+          <th>Purchase Price</th>
+          <th>Tax % for Item</th>
+          <th>Tax Payable for Item</th>
+          <th>Total Price of the Item</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for product in products %}
+        <tr>
+          <td>{{ product.product_id }}</td>
+          <td>{{ product.unit_price }}</td>
+          <td>{{ product.quantity }}</td>
+          <td>{{ product.purchase_price }}</td>
+          <td>{{ product.tax_percentage }}</td>
+          <td>{{ product.tax_payable }}</td>
+          <td>{{ product.total_price }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    
+    <!-- Summary Section -->
+    <div class="row mt-4">
+      <div class="col-md-6">
+        <ul class="list-group">
+          <li class="list-group-item">
+            <strong>Total price without tax:</strong> {{ total_without_tax }}
+          </li>
+          <li class="list-group-item">
+            <strong>Total tax payable:</strong> {{ total_tax }}
+          </li>
+          <li class="list-group-item">
+            <strong>Net price of the purchased items:</strong> {{ net_price }}
+          </li>
+          <li class="list-group-item">
+            <strong>Rounded down value of the purchased items net price:</strong> {{ rounded_price }}
+          </li>
+          <li class="list-group-item">
+            <strong>Balance payable to the customer:</strong> {{ balance }}
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Balance Denomination Section -->
+    <div class="mt-4">
+      <h5>Balance Denomination:</h5>
+      <table class="table table-bordered">
+        <thead class="table-light">
+          <tr>
+            <th>Denomination</th>
+            <th>Count</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for denom, count in balance_denomination.items %}
+          <tr>
+            <td>{{ denom }}</td>
+            <td>{{ count }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
